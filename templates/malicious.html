@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attack Simulation - ClickLock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .warning-banner {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 20px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .warning-icon {
+            font-size: 48px;
+        }
+
+        .warning-text h2 {
+            margin-bottom: 5px;
+        }
+
+        .warning-text p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #ef4444;
+        }
+
+        .header p {
+            color: #999;
+        }
+
+        .control-panel {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #ef4444;
+        }
+
+        .control-panel h3 {
+            margin-bottom: 20px;
+            color: #ef4444;
+        }
+
+        .attack-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .attack-option {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .attack-option:hover {
+            border-color: #ef4444;
+            transform: translateY(-3px);
+        }
+
+        .attack-option.active {
+            border-color: #10b981;
+            background: #064e3b;
+        }
+
+        .attack-option h4 {
+            margin-bottom: 8px;
+            color: #ef4444;
+        }
+
+        .attack-option p {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .demo-area {
+            background: white;
+            padding: 60px;
+            border-radius: 15px;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-title {
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 24px;
+        }
+
+        .demo-button {
+            display: block;
+            margin: 0 auto;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .hidden-button {
+            display: none;
+            position: absolute;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .invisible-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(239, 68, 68, 0.01);
+            z-index: 3;
+            display: none;
+            cursor: pointer;
+        }
+
+        .attack-status {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 4px solid #ef4444;
+        }
+
+        .attack-status h4 {
+            margin-bottom: 10px;
+            color: #ef4444;
+        }
+
+        .status-item {
+            padding: 10px;
+            background: #0f3460;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #16213e;
+            color: #666;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @keyframes attackAnimation {
+            0%, 100% {
+                border-color: #ef4444;
+            }
+            50% {
+                border-color: #fbbf24;
+            }
+        }
+
+        .demo-area.attack-active {
+            border: 3px solid #ef4444;
+            animation: attackAnimation 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Warning Banner -->
+    <div class="warning-banner">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-text">
+            <h2>⚡ Attack Simulation Environment</h2>
+            <p>This is a controlled testing environment. The attacks demonstrated here are for educational purposes only.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 ClickLock Attack Simulator</h1>
+            <p>Select an attack type below and test ClickLock's protection capabilities</p>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h3>Select Attack Type:</h3>
+            
+            <div class="attack-selector">
+                <div class="attack-option" onclick="selectAttack('button_swap')">
+                    <h4>🔄 Button Swap Attack</h4>
+                    <p>Swaps button content right before click</p>
+                </div>
+
+                <div class="attack-option" onclick="selectAttack('invisible_overlay')">
+                    <h4>👻 Invisible Overlay</h4>
+                    <p>Places transparent element over target</p>
+                </div>
+
+                <div class="attack-option" onclick="selectAttack('position_shift')">
+                    <h4>📍 Position Shift</h4>
+                    <p>Moves button away at last moment</p>
+                </div>
+
+                <div class="attack-option" onclick="selectAttack('opacity_trick')">
+                    <h4>💫 Opacity Manipulation</h4>
+                    <p>Changes element opacity during click</p>
+                </div>
+            </div>
+
+            <div class="control-buttons">
+                <button class="btn btn-danger" onclick="activateAttack()">
+                    ⚔️ Activate Attack
+                </button>
+                <button class="btn btn-secondary" onclick="resetDemo()">
+                    🔄 Reset Demo
+                </button>
+                <button class="btn btn-success" onclick="window.location.href='/'">
+                    🛡️ Go to Protected Page
+                </button>
+            </div>
+        </div>
+
+        <!-- Demo Area -->
+        <div class="demo-area" id="demoArea">
+            <h2 class="demo-title">Click the button below to test</h2>
+            
+            <button class="demo-button" id="targetButton" onclick="handleButtonClick('target')">
+                🎁 Click to Win $1000!
+            </button>
+
+            <button class="hidden-button" id="hiddenButton" onclick="handleButtonClick('malicious')">
+                💀 Delete Your Account
+            </button>
+
+            <div class="invisible-overlay" id="overlay" onclick="handleButtonClick('overlay')"></div>
+        </div>
+
+        <!-- Attack Status -->
+        <div class="attack-status">
+            <h4>📊 Attack Status Log:</h4>
+            <div id="statusLog">
+                <div class="status-item">System ready. Select an attack type above.</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><a href="/">← Back to Protected Page</a> | <a href="/defender-dashboard">View Dashboard</a></p>
+        </div>
+    </div>
+
+    <script>
+        let selectedAttack = null;
+        let attackActive = false;
+        let attackCount = 0;
+
+        // Select attack type
+        function selectAttack(type) {
+            selectedAttack = type;
+            
+            // Update UI
+            document.querySelectorAll('.attack-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.closest('.attack-option').classList.add('active');
+            
+            logStatus(`✓ Selected: ${type.replace('_', ' ').toUpperCase()}`);
+        }
+
+        // Activate selected attack
+        function activateAttack() {
+            if (!selectedAttack) {
+                alert('⚠️ Please select an attack type first!');
+                return;
+            }
+
+            attackActive = true;
+            document.getElementById('demoArea').classList.add('attack-active');
+            logStatus(`🚨 ATTACK ACTIVATED: ${selectedAttack}`);
+
+            // Setup attack based on type
+            switch(selectedAttack) {
+                case 'button_swap':
+                    setupButtonSwap();
+                    break;
+                case 'invisible_overlay':
+                    setupInvisibleOverlay();
+                    break;
+                case 'position_shift':
+                    setupPositionShift();
+                    break;
+                case 'opacity_trick':
+                    setupOpacityTrick();
+                    break;
+            }
+        }
+
+        // Attack 1: Button Swap
+        function setupButtonSwap() {
+            const target = document.getElementById('targetButton');
+            const hidden = document.getElementById('hiddenButton');
+            const demoArea = document.getElementById('demoArea');
+
+            target.addEventListener('mouseenter', function swapHandler() {
+                logStatus('⚠️ Mouse detected near button...');
+                
+                setTimeout(() => {
+                    if (attackActive) {
+                        // Get position relative to demo area (parent container)
+                        const targetRect = target.getBoundingClientRect();
+                        const demoRect = demoArea.getBoundingClientRect();
+                        
+                        // Calculate relative position within the demo area
+                        const relativeLeft = targetRect.left - demoRect.left;
+                        const relativeTop = targetRect.top - demoRect.top;
+                        
+                        // Position hidden button exactly where target was
+                        hidden.style.display = 'block';
+                        hidden.style.position = 'absolute';
+                        hidden.style.left = relativeLeft + 'px';
+                        hidden.style.top = relativeTop + 'px';
+                        
+                        // Hide target button (swap content, not position)
+                        target.style.display = 'none';
+                        logStatus('🔄 SWAP EXECUTED! Button content changed!');
+                    }
+                }, 500);
+                
+                target.removeEventListener('mouseenter', swapHandler);
+            });
+        }
+
+        // Attack 2: Invisible Overlay
+        function setupInvisibleOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'block';
+            logStatus('👻 Invisible overlay placed over button');
+            logStatus('⚠️ Clicks will hit hidden element instead!');
+        }
+
+        // Attack 3: Position Shift
+        function setupPositionShift() {
+            const target = document.getElementById('targetButton');
+            const hidden = document.getElementById('hiddenButton');
+
+            target.addEventListener('mousedown', function shiftHandler(e) {
+                if (attackActive) {
+                    e.preventDefault();
+                    
+                    // Get original position before moving
+                    const targetRect = target.getBoundingClientRect();
+                    const demoRect = document.getElementById('demoArea').getBoundingClientRect();
+                    
+                    // Shift target away
+                    target.style.transform = 'translateX(500px)';
+                    target.style.transition = 'transform 0.05s';
+                    
+                    // Show hidden button in original position
+                    hidden.style.display = 'block';
+                    hidden.style.position = 'absolute';
+                    hidden.style.left = (targetRect.left - demoRect.left) + 'px';
+                    hidden.style.top = (targetRect.top - demoRect.top) + 'px';
+                    
+                    logStatus('📍 POSITION SHIFT! Button moved away!');
+                    logStatus('💀 Malicious button took its place!');
+                }
+                
+                target.removeEventListener('mousedown', shiftHandler);
+            }, true);
+        }
+
+        // Attack 4: Opacity Manipulation
+        // function setupOpacityTrick() {
+        //     const target = document.getElementById('targetButton');
+        //     const hidden = document.getElementById('hiddenButton');
+
+        //     // Position hidden button behind target
+        //     const rect = target.getBoundingClientRect();
+        //     hidden.style.display = 'block';
+        //     hidden.style.position = 'absolute';
+        //     hidden.style.left = rect.left + 'px';
+        //     hidden.style.top = rect.top + 'px';
+        //     hidden.style.opacity = '0';
+
+        //     target.addEventListener('mousedown', function opacityHandler() {
+        //         if (attackActive) {
+        //             // Quickly swap opacities
+        //             target.style.opacity = '0';
+        //             hidden.style.opacity = '1';
+        //             logStatus('💫 OPACITY SWAPPED! Hidden button revealed!');
+        //         }
+                
+        //         target.removeEventListener('mousedown', opacityHandler);
+        //     }, true);
+
+        //     logStatus('💫 Opacity trap set. Buttons will swap on click.');
+        // }
+        function setupOpacityTrick() {
+    const target = document.getElementById('targetButton');
+    const hidden = document.getElementById('hiddenButton');
+
+    const targetRect = target.getBoundingClientRect();
+    const demoRect = document.getElementById('demoArea').getBoundingClientRect();
+
+    hidden.style.display = 'block';
+    hidden.style.position = 'absolute';
+    hidden.style.left = (targetRect.left - demoRect.left) + 'px';
+    hidden.style.top = (targetRect.top - demoRect.top) + 'px';
+    hidden.style.opacity = '0';
+    hidden.style.zIndex = '10';
+    hidden.style.pointerEvents = 'none';
+
+    target.addEventListener('mousedown', function opacityHandler(e) {
+        if (!attackActive) return;
+
+        // 🚨 Critical swap
+        target.style.opacity = '0';
+        target.style.pointerEvents = 'none';
+
+        hidden.style.opacity = '1';
+        hidden.style.pointerEvents = 'auto';
+
+        logStatus('💫 OPACITY ATTACK EXECUTED!');
+    }, true);
+}
+
+
+        // Handle button clicks
+        function handleButtonClick(type) {
+            attackCount++;
+
+            if (type === 'target') {
+                logStatus('✅ Legitimate button clicked!');
+                alert('✅ Success! You clicked the intended button.');
+            } else {
+                logStatus('💀 MALICIOUS BUTTON CLICKED!');
+                logStatus(`⚠️ Attack successful! (${selectedAttack})`);
+                
+                // Log attack to backend
+                fetch('/api/log-attack', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        attack_type: selectedAttack,
+                        target_element: 'targetButton',
+                        malicious_element: type === 'overlay' ? 'invisibleOverlay' : 'hiddenButton',
+                        page_url: '/malicious',
+                        blocked: false,
+                        risk_level: 'high'
+                    })
+                });
+
+                alert('💀 ATTACK SUCCESSFUL!\n\nYou clicked the malicious element!\n\nIn a real attack, this could have:\n- Deleted your account\n- Transferred money\n- Granted permissions\n\nThis is why ghost click defense is important!');
+            }
+
+            resetDemo();
+        }
+
+        // Reset demo
+        function resetDemo() {
+            attackActive = false;
+            selectedAttack = null;
+
+            // Reset all elements
+            document.getElementById('targetButton').style = '';
+            document.getElementById('hiddenButton').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('demoArea').classList.remove('attack-active');
+
+            // Clear active selection
+            document.querySelectorAll('.attack-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+
+            logStatus('🔄 Demo reset. Select a new attack type.');
+        }
+
+        // Log status messages
+        function logStatus(message) {
+            const log = document.getElementById('statusLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const item = document.createElement('div');
+            item.className = 'status-item';
+            item.textContent = `[${timestamp}] ${message}`;
+            
+            log.insertBefore(item, log.firstChild);
+
+            // Keep only last 10 messages
+            while (log.children.length > 10) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // Initialize
+        console.log('⚠️ Attack Simulator initialized');
+        logStatus('⚠️ Attack simulation environment loaded');
+    </script>
+</body>
+</html>

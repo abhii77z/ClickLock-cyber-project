@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Page - ClickLock Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .protection-banner {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .protection-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: bold;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.2);
+            }
+        }
+
+        .protection-stats {
+            display: flex;
+            gap: 25px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .form-section {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            z-index: 10000;
+            min-width: 400px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: alertPop 0.3s;
+        }
+
+        @keyframes alertPop {
+            from {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .alert-icon {
+            font-size: 48px;
+        }
+
+        .alert-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ef4444;
+        }
+
+        .alert-message {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .alert-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e5e7eb;
+            color: #999;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .protection-banner {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .protection-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .alert {
+                min-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Protection Banner -->
+    <div class="protection-banner">
+        <div class="protection-status">
+            <div class="status-indicator"></div>
+            🛡️ ClickLock Active
+        </div>
+        <div class="protection-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="blockedCount">0</div>
+                <div class="stat-label">Threats Blocked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="clickCount">0</div>
+                <div class="stat-label">Safe Clicks</div>
+            </div>
+            <p class="d-flex gap-2">
+                <a href="/admin-login" class="btn btn-primary">Admin Login</a>
+                <a href="/defender-dashboard" class="btn btn-success">View Dashboard</a>
+                <a href="/malicious" class="btn btn-secondary">⚠️ Test Attack Simulation</a>
+                <a href="/test-console" class="btn btn-success">Test Console</a>
+            </p>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Welcome to the Protected Demo Page</h1>
+        <p class="subtitle">This page is actively protected by ClickLock. Try clicking any buttons - they're safe!</p>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <div class="card">
+                <h3>🎁 Special Offer</h3>
+                <p>Download our exclusive free eBook on web security best practices.</p>
+                <button class="btn" id="downloadBtn" onclick="handleLegitimateClick('downloadBtn')">
+                    Download Now
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>📧 Newsletter</h3>
+                <p>Subscribe to our weekly newsletter for the latest security updates.</p>
+                <button class="btn btn-success" id="subscribeBtn" onclick="handleLegitimateClick('subscribeBtn')">
+                    Subscribe Free
+                </button>
+            </div>
+
+            <div class="card">
+                <h3>🏆 Win Prizes</h3>
+                <p>Enter our monthly giveaway to win premium security tools.</p>
+                <button class="btn btn-secondary" id="prizeBtn" onclick="handleLegitimateClick('prizeBtn')">
+                    Enter Contest
+                </button>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-section">
+            <h3>🔐 User Login</h3>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <button class="btn" id="loginBtn" onclick="handleLegitimateClick('loginBtn')">
+                Login
+            </button>
+        </div>
+
+        <!-- More Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn" id="purchaseBtn" onclick="handleLegitimateClick('purchaseBtn')">
+                💳 Make Purchase
+            </button>
+            <button class="btn btn-success" id="upgradeBtn" onclick="handleLegitimateClick('upgradeBtn')">
+                ⬆️ Upgrade Account
+            </button>
+            <button class="btn btn-secondary" id="settingsBtn" onclick="handleLegitimateClick('settingsBtn')">
+                ⚙️ Settings
+            </button>
+            <a href="/defender-dashboard" class="btn">
+                📊 View Dashboard
+            </a>
+            <a href="/malicious" class="btn btn-secondary">
+                ⚠️ Test Attack Simulation
+            </a>
+        </div>
+
+        <!-- Real-time Security Console -->
+        <div class="form-section" style="margin-top: 30px; border-left: 4px solid #667eea;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">🛡️ Real-time Security Monitor</h3>
+                <button class="btn btn-secondary" style="padding: 5px 15px; font-size: 12px;" onclick="document.getElementById('securityLog').innerHTML = ''">Clear Log</button>
+            </div>
+            <div id="securityLog" style="background: #1a1a2e; color: #00ff00; padding: 15px; border-radius: 8px; font-family: monospace; height: 200px; overflow-y: auto; font-size: 13px; line-height: 1.5;">
+                <div style="color: #888;">> Waiting for security events...</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Protected by ClickLock v1.0</p>
+            <p><a href="/test-console">Test Console</a></p>
+            <p><a href="/admin-login">Admin Login</a> | Developed for Educational Purposes</p>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="alert" id="alertBox">
+        <div class="alert-header">
+            <div class="alert-icon">🚨</div>
+            <div class="alert-title">Attack Blocked!</div>
+        </div>
+        <div class="alert-message" id="alertMessage">
+            A suspicious click pattern was detected and blocked for your safety.
+        </div>
+        <div class="alert-footer">
+            <button class="btn btn-secondary" onclick="closeAlert()">Close</button>
+            <button class="btn" onclick="reportFalsePositive()">Report False Positive</button>
+        </div>
+    </div>
+
+    <!-- Defender Script -->
+    <script>
+        // Mirror console to UI
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const logContainer = document.getElementById('securityLog');
+
+        function uiLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            const time = new Date().toLocaleTimeString();
+            entry.style.marginBottom = '5px';
+            
+            if (type === 'warn') entry.style.color = '#ffcc00';
+            if (message.includes('🚨') || message.includes('⚠️')) entry.style.color = '#ff4444';
+            if (message.includes('🛡️')) entry.style.color = '#00d1ff';
+            if (message.includes('🔍')) entry.style.color = '#a855f7';
+
+            entry.textContent = `[${time}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            uiLog(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            uiLog(args.join(' '), 'warn');
+            originalWarn.apply(console, args);
+        };
+
+        let clickCount = 0;
+        let blockedCount = 0;
+        let mouseHistory = [];
+        let lastMouseTime = Date.now();
+        let isDOMLocked = false; // State for DOM Freezing logic
+
+        // Track mouse movement
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            mouseHistory.push({
+                x: e.clientX,
+                y: e.clientY,
+                time: now,
+                element: document.elementFromPoint(e.clientX, e.clientY)
+            });
+
+            // Keep only last 5 positions
+            if (mouseHistory.length > 5) {
+                mouseHistory.shift();
+            }
+
+            lastMouseTime = now;
+        });
+
+        // Tracking mutations near the cursor while mouse is stationary
+        let mutationHistory = [];
+        const mutationObserver = new MutationObserver((mutations) => {
+            const now = Date.now();
+            const timeSinceMove = now - lastMouseTime;
+            
+            // If the mouse has been stationary for more than 100ms
+            if (timeSinceMove > 100 && mouseHistory.length > 0) {
+                const lastPos = mouseHistory[mouseHistory.length - 1];
+                
+                mutations.forEach(mutation => {
+                    let target = mutation.target;
+                    // If it's a text node mutation, check the parent element
+                    if (target.nodeType === 3) target = target.parentElement;
+                    
+                    if (target && target instanceof Element) {
+                        const rect = target.getBoundingClientRect();
+                        const isNearCursor = (
+                            lastPos.x >= rect.left - 10 && 
+                            lastPos.x <= rect.right + 10 && 
+                            lastPos.y >= rect.top - 10 && 
+                            lastPos.y <= rect.bottom + 10
+                        );
+
+                        if (isNearCursor) {
+                            console.log(`🛡️ Mutation (${mutation.type}) detected near stationary cursor on ${target.tagName}`);
+                            
+                            // If DOM is locked (during a click), this is a critical violation
+                            if (isDOMLocked) {
+                                console.warn("🚨 CRITICAL: DOM Mutation attempted during FREEZE period!");
+                                mutationHistory.push({
+                                    time: now,
+                                    type: "freeze_violation",
+                                    target: target.id || target.className || target.tagName
+                                });
+                            } else {
+                                mutationHistory.push({
+                                    time: now,
+                                    type: mutation.type,
+                                    target: target.id || target.className || target.tagName
+                                });
+                            }
+                            
+                            // Keep only last 10 mutations
+                            if (mutationHistory.length > 10) mutationHistory.shift();
+                        }
+                    }
+                });
+            }
+        });
+
+        // Start observing with broad options to detect ghost-click setups
+        mutationObserver.observe(document.body, {
+            childList: true,
+            attributes: true,
+            subtree: true,
+            characterData: true,
+            attributeFilter: ['style', 'class', 'hidden', 'visibility', 'opacity']
+        });
+
+        // Intercept all clicks for validation
+        document.addEventListener('mousedown', (e) => {
+            isDOMLocked = true; // Activate DOM Freeze/Lock during click processing
+            
+            const validationResult = validateClick(e);
+            
+            if (validationResult.score > 80) {
+                // Block suspicious click
+                e.preventDefault();
+                e.stopPropagation();
+                showAttackAlert(e.target, validationResult);
+                logAttack(e.target, validationResult.score, validationResult.maliciousElement);
+                blockedCount++;
+                updateStats();
+                isDOMLocked = false; // Release lock
+                return false;
+            }
+
+            // Release lock after a short delay if the click is safe
+            setTimeout(() => { isDOMLocked = false; }, 100);
+        }, true);
+
+        // Ensure lock is released even if mousedown doesn't lead to a full click
+        document.addEventListener('mouseup', () => {
+            setTimeout(() => { isDOMLocked = false; }, 50);
+        });
+
+        // Validate click legitimacy
+        function validateClick(event) {
+            let suspicionScore = 0;
+            const target = event.target;
+            let maliciousElement = "unknown";
+            
+            // Check 1: Element consistency
+            if (mouseHistory.length >= 2) {
+                const lastElement = mouseHistory[mouseHistory.length - 1].element;
+                if (lastElement !== target) {
+                    suspicionScore += 30;
+                    console.log('⚠️ Element changed under cursor');
+                }
+            }
+
+            // Check 2: Rapid element changes
+            const recentChanges = mouseHistory.slice(-3).filter((h, i, arr) => {
+                return i > 0 && arr[i].element !== arr[i-1].element;
+            });
+            if (recentChanges.length >= 2) {
+                suspicionScore += 40;
+                console.log('⚠️ Rapid element changes detected');
+            }
+
+            // Check 3: Check for overlays
+            const elementsAtPoint = document.elementsFromPoint(event.clientX, event.clientY);
+            
+            const isSuspicious = (el) => {
+                const style = window.getComputedStyle(el);
+                const isTransparent = parseFloat(style.opacity) < 0.1;
+                const isVisible = style.visibility !== 'hidden' && style.display !== 'none';
+                return isTransparent && isVisible && style.pointerEvents !== 'none';
+            };
+
+            // 3.1 Check if target itself is a ghost element
+            if (isSuspicious(target)) {
+                suspicionScore += 80;
+                maliciousElement = target.id || target.className || target.tagName;
+                console.log(`⚠️ Clicked target is an invisible overlay: ${maliciousElement}`);
+            }
+
+            // 3.2 Check for other overlays in the stack
+            const suspiciousElements = elementsAtPoint.filter(el => el !== target && isSuspicious(el));
+            if (suspiciousElements.length > 0) {
+                suspicionScore += 60;
+                if (maliciousElement === "unknown") {
+                    const malicious = suspiciousElements[0];
+                    maliciousElement = malicious.id || malicious.className || malicious.tagName;
+                }
+                console.log(`⚠️ Invisible overlay detected in stack: ${maliciousElement}`);
+            }
+
+            // Check 4: Style changes
+            const computedStyle = window.getComputedStyle(target);
+            if (target.dataset.lastOpacity) {
+                const opacityChange = Math.abs(parseFloat(computedStyle.opacity) - parseFloat(target.dataset.lastOpacity));
+                if (opacityChange > 0.3) {
+                    suspicionScore += 40;
+                    console.log('⚠️ Opacity change detected');
+                }
+            }
+            target.dataset.lastOpacity = computedStyle.opacity;
+
+            // Check 5: Recent mutations near cursor
+            const now = Date.now();
+            const recentMutations = mutationHistory.filter(m => (now - m.time) < 2000);
+            if (recentMutations.length > 0) {
+                const hasFreezeViolation = recentMutations.some(m => m.type === 'freeze_violation');
+                suspicionScore += hasFreezeViolation ? 100 : 50;
+                console.log(`⚠️ Detected ${recentMutations.length} recent mutations under cursor${hasFreezeViolation ? ' (INCLUDES FREEZE VIOLATION)' : ''}`);
+                
+                // If it's a freeze violation, we know the "malicious" actor is the one mutating the target
+                if (hasFreezeViolation && maliciousElement === "unknown") {
+                    const violation = recentMutations.find(m => m.type === 'freeze_violation');
+                    maliciousElement = `Mutator: ${violation.target}`;
+                }
+            }
+
+            console.log(`🔍 Suspicion score: ${suspicionScore}`);
+            return {
+                score: suspicionScore,
+                maliciousElement: maliciousElement
+            };
+        }
+
+        // Show attack alert
+        function showAttackAlert(element, maliciousDetails = null) {
+            const alertBox = document.getElementById('alertBox');
+            const overlay = document.getElementById('overlay');
+            const message = document.getElementById('alertMessage');
+
+            const elementName = element.id || element.className || element.tagName;
+            let alertContent = `A ghost-click attack was detected and blocked while you were trying to interact with "${elementName}". Your action has been protected.`;
+            
+            if (maliciousDetails && maliciousDetails.maliciousElement) {
+                alertContent += ` (Identified suspicious overlay: ${maliciousDetails.maliciousElement})`;
+            }
+
+            message.textContent = alertContent;
+
+            alertBox.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        // Close alert
+        function closeAlert() {
+            document.getElementById('alertBox').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+
+        // Report false positive
+        function reportFalsePositive() {
+            alert('Thank you for your feedback. This has been reported to the security team.');
+            closeAlert();
+        }
+
+        // Handle legitimate clicks
+        function handleLegitimateClick(btnId) {
+            clickCount++;
+            updateStats();
+            
+            // Log legitimate click to backend
+            fetch('/api/log-click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    element: btnId,
+                    page_url: window.location.pathname
+                })
+            });
+
+            // Show success feedback
+            alert(`✅ Action completed successfully! (${btnId})`);
+        }
+
+        // Log attack to backend
+        function logAttack(element, score, maliciousElement = 'unknown') {
+            const elementName = element.id || element.className || element.tagName;
+            
+            fetch('/api/log-attack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    attack_type: 'suspicious_pattern',
+                    target_element: elementName,
+                    malicious_element: maliciousElement,
+                    page_url: window.location.pathname,
+                    blocked: true,
+                    risk_level: score > 100 ? 'high' : score > 50 ? 'medium' : 'low'
+                })
+            });
+        }
+
+        // Update stats display
+        function updateStats() {
+            document.getElementById('clickCount').textContent = clickCount;
+            document.getElementById('blockedCount').textContent = blockedCount;
+        }
+
+        // Initialize
+        console.log('🛡️ ClickLock initialized and monitoring...');
+    </script>
+</body>
+</html>

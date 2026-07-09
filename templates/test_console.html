@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ClickLock Test Console</title>
+
+<style>
+    body {
+        background: #0f172a;
+        color: #e5e7eb;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+        margin: 0;
+        overflow-x: hidden;
+    }
+    .container { 
+        max-width: 1400px; 
+        margin: 20px auto; 
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 30px;
+        align-items: start;
+    }
+    .main-panel {
+        background: #1e293b;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .console-panel {
+        position: sticky;
+        top: 20px;
+        background: #020617;
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        height: calc(100vh - 80px);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    h1 { color: #38bdf8; text-align: left; margin-top: 0; margin-bottom: 25px; font-size: 2rem; }
+    h3 { color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 30px; }
+    
+    .abstract {
+        background: #0f172a;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        border-left: 4px solid #38bdf8;
+        font-size: 0.95rem;
+    }
+
+    button {
+        margin: 5px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+    }
+    button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .attack { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; }
+    .defense { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; }
+    .target-btn { background: #38bdf8; color: #0f172a; border: 2px solid transparent; }
+    .reset-btn { background: #475569; color: white; }
+
+    .matrix-table {
+        width: 100%;
+        margin-top: 30px;
+        border-collapse: collapse;
+        background: #0f172a;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #334155;
+    }
+    .matrix-table th, .matrix-table td {
+        padding: 15px;
+        text-align: center;
+        border: 1px solid #334155;
+        font-size: 0.85rem;
+    }
+    .matrix-table th { background: #334155; color: #38bdf8; font-weight: 800; }
+    .check { color: #10b981; font-weight: bold; }
+    .cross { color: #ef4444; font-weight: bold; }
+
+    .stats {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .stat-card {
+        background: #1e293b;
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 4px solid #38bdf8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .stat-label { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; }
+    .stat-value { font-size: 1.4rem; font-weight: 800; color: #38bdf8; }
+
+    .log {
+        flex: 1;
+        background: #000;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-y: auto;
+        border: 1px solid #1e293b;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.8rem;
+    }
+    .log-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        color: #38bdf8;
+        font-size: 0.85rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+    .log div { margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #111; line-height: 1.4; }
+    .log-attack { color: #f87171; border-left: 3px solid #f87171; padding-left: 8px; }
+    .log-defense { color: #34d399; border-left: 3px solid #34d399; padding-left: 8px; }
+    .log-system { color: #60a5fa; }
+
+    #targetArea {
+        padding: 60px;
+        background: #0f172a;
+        border-radius: 12px;
+        border: 2px dashed #334155;
+        text-align: center;
+        position: relative;
+        min-height: 120px;
+        transition: border-color 0.3s;
+    }
+    #targetArea.active-monitor {
+        border-color: #10b981;
+        box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.1);
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <!-- Left Column: Controls and Visualization -->
+    <div class="main-panel">
+        <h1>🛡️ Ghost Click Attack – Test Console</h1>
+
+        <div class="abstract">
+            ClickLock is a security mechanism designed to detect and prevent ghost-click or click-jacking attacks inside web browsers. This system freezes the Document Object Model (DOM) before the click executes, analyzes suspicious element movements, and blocks the malicious event.
+        </div>
+
+        <h3>🎯 Target Buttons</h3>
+        <div id="targetArea">
+            <button id="downloadBtn" class="target-btn" onclick="handleTargetClick('Legitimate Download')">Download Now</button>
+            <button id="subscribeBtn" class="target-btn" onclick="handleTargetClick('Legitimate Subscribe')">Subscribe Free</button>
+        </div>
+
+        <h3>⚔️ Attack Simulations</h3>
+        <button class="attack" onclick="armAttack('button_swap')">Button Swap</button>
+        <button class="attack" onclick="armAttack('invisible_overlay')">Invisible Overlay</button>
+        <button class="attack" onclick="armAttack('position_shift')">Position Shift</button>
+        <button class="attack" onclick="armAttack('opacity_trick')">Opacity Manipulation</button>
+
+        <h3>🛡️ ClickLock Controls</h3>
+        <button class="defense" id="defenderBtn" onclick="activateDefender()">Activate ClickLock</button>
+        <button class="reset-btn" onclick="resetDemo()">🔄 Reset All</button>
+
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Attack Type</th>
+                    <th>DOM Freeze</th>
+                    <th>Cursor Tracking</th>
+                    <th>CSS Monitoring</th>
+                    <th>Click Block</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Button Swap</td>
+                    <td class="check">✅</td>
+                    <td class="check">✅</td>
+                    <td class="cross">❌</td>
+                    <td class="check">✅</td>
+                </tr>
+                <tr>
+                    <td>Invisible Overlay</td>
+                    <td class="cross">❌</td>
+                    <td class="check">✅</td>
+                    <td class="check">✅</td>
+                    <td class="check">✅</td>
+                </tr>
+                <tr>
+                    <td>Position Shift</td>
+                    <td class="check">✅</td>
+                    <td class="check">✅</td>
+                    <td class="cross">❌</td>
+                    <td class="check">✅</td>
+                </tr>
+                <tr>
+                    <td>Opacity Manipulation</td>
+                    <td class="cross">❌</td>
+                    <td class="check">✅</td>
+                    <td class="check">✅</td>
+                    <td class="check">✅</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Right Column: Console -->
+    <div class="console-panel">
+        <div class="log-header">
+            <span>🖥️ SYSTEM CONSOLE</span>
+            <span id="systemClock" style="font-size: 0.7rem; opacity: 0.5;"></span>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-label">Suspicion Score</span>
+                <span class="stat-value" id="score">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Blocked Attacks</span>
+                <span class="stat-value" id="blocked">0</span>
+            </div>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+</div>
+
+<script>
+let suspicionScore = 0;
+let blockedCount = 0;
+let mutations = [];
+let freezeWindow = false;
+let defenderActive = false;
+let armedAttack = null;
+
+// Console Clock
+setInterval(() => {
+    const clock = document.getElementById('systemClock');
+    if (clock) clock.textContent = new Date().toLocaleTimeString();
+}, 1000);
+
+/* ======================
+   DEFENDER: DOM FREEZE (FIRST)
+====================== */
+document.addEventListener('mousedown', (e) => {
+    if (!defenderActive || !armedAttack) return;
+
+    // Start DOM freeze window BEFORE attacker runs
+    freezeWindow = true;
+    mutations = [];
+
+    // End freeze window after safe threshold
+    setTimeout(() => {
+        freezeWindow = false;
+    }, 600);
+
+    // Allow MutationObserver to collect evidence
+    setTimeout(() => {
+        validate(e, 'mousedown');
+    }, 15);
+
+}, true); // CAPTURE PHASE – executes before attacker
+
+/* ======================
+   DEFENDER: CLICK VALIDATION (FINAL GATE)
+====================== */
+document.addEventListener('click', (e) => {
+    if (!defenderActive || !armedAttack) return;
+    validate(e, 'click');
+}, true);
+
+/* ======================
+   ATTACK SIMULATIONS
+====================== */
+document.addEventListener('mousedown', (e) => {
+    if (!armedAttack) return;
+
+    const target = e.target;
+
+    // Button Swap Attack
+    if (armedAttack === 'button_swap' && target.id === 'downloadBtn') {
+        target.textContent = '💀 FORMAT DISK';
+        target.style.background = '#ef4444';
+        log('🔄 ATTACK TRIGGERED: Content hijacked on mousedown.', 'attack');
+    }
+
+    // Position Shift Attack
+    if (armedAttack === 'position_shift' && target.id === 'subscribeBtn') {
+        const r = target.getBoundingClientRect();
+        target.style.transform = 'translate(150px, 50px)';
+        log('📍 ATTACK TRIGGERED: Element shifted on mousedown.', 'attack');
+        
+        // Place malicious button in original spot
+        if (!document.getElementById('position-shift-trap')) {
+            const shiftTrap = document.createElement('button');
+            shiftTrap.id = 'position-shift-trap';
+            shiftTrap.textContent = '💀 DELETE ACCOUNT';
+            shiftTrap.className = 'attack';
+            shiftTrap.style.position = 'fixed';
+            shiftTrap.style.top = r.top + 'px';
+            shiftTrap.style.left = r.left + 'px';
+            shiftTrap.style.width = r.width + 'px';
+            shiftTrap.style.height = r.height + 'px';
+            shiftTrap.style.zIndex = '1000';
+            shiftTrap.onclick = () => {
+                if (!defenderActive) {
+                    alert('💀 ATTACK SUCCESSFUL!\nMalicious "Delete Account" button clicked.');
+                    log('💀 Attack Successful: Position Shift (Delete Account)', 'attack');
+                    resetState();
+                }
+            };
+            document.body.appendChild(shiftTrap);
+        }
+    }
+
+}, true);
+
+function log(msg, type) {
+    const div = document.createElement('div');
+    if (type) div.className = 'log-' + type;
+    div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    const logEl = document.getElementById('log');
+    if (logEl) logEl.prepend(div);
+}
+
+function handleTargetClick(action) {
+    if (!defenderActive && armedAttack) {
+        alert(`💀 ATTACK SUCCESSFUL!\n\nMalicious action executed instead of: ${action}\n\nIn a real scenario, your data would be compromised.`);
+        log(`💀 Attack Successful: ${armedAttack}`, 'attack');
+        resetState();
+    } else if (!armedAttack) {
+        alert(`✅ Success!\nAction: ${action} executed safely.`);
+        log(`✅ Safe Click: ${action}`, 'defense');
+    }
+}
+
+function armAttack(type) {
+    resetState();
+    armedAttack = type;
+    log(`⚔️ ATTACK ARMED: ${type.toUpperCase()}. Hover/Click target area.`, 'attack');
+}
+
+function resetState() {
+    const downloadBtn = document.getElementById('downloadBtn');
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    
+    if (downloadBtn) {
+        downloadBtn.textContent = 'Download Now';
+        downloadBtn.style = '';
+        downloadBtn.className = 'target-btn';
+        downloadBtn.style.opacity = '1';
+    }
+    
+    if (subscribeBtn) {
+        subscribeBtn.textContent = 'Subscribe Free';
+        subscribeBtn.style = '';
+        subscribeBtn.className = 'target-btn';
+        subscribeBtn.style.opacity = '1';
+    }
+    
+    const overlay = document.getElementById('malicious-overlay');
+    if (overlay) overlay.remove();
+    const trap = document.getElementById('opacity-trap');
+    if (trap) trap.remove();
+    const shiftTrap = document.getElementById('position-shift-trap');
+    if (shiftTrap) shiftTrap.remove();
+}
+
+function resetDemo() {
+    resetState();
+    armedAttack = null;
+    suspicionScore = 0;
+    blockedCount = 0;
+    mutations = [];
+    document.getElementById('score').textContent = '0';
+    document.getElementById('blocked').textContent = '0';
+    document.getElementById('log').innerHTML = '';
+    log('🔄 System Reset Initialized...', 'system');
+}
+
+document.addEventListener('mouseover', (e) => {
+    if (!armedAttack) return;
+    const target = e.target;
+    
+    if (armedAttack === 'button_swap' && target.id === 'downloadBtn') {
+        target.textContent = '💀 FORMAT DISK';
+        target.style.background = '#ef4444';
+        log('🔄 Attack Preview: Hover swap active', 'attack');
+    }
+    
+    if (armedAttack === 'position_shift' && target.id === 'subscribeBtn') {
+        const r = target.getBoundingClientRect();
+        target.style.transform = 'translate(150px, 50px)';
+        log('📍 Attack Preview: Hover shift active', 'attack');
+
+        if (!document.getElementById('position-shift-trap')) {
+            const shiftTrap = document.createElement('button');
+            shiftTrap.id = 'position-shift-trap';
+            shiftTrap.textContent = '💀 DELETE ACCOUNT';
+            shiftTrap.className = 'attack';
+            shiftTrap.style.position = 'fixed';
+            shiftTrap.style.top = r.top + 'px';
+            shiftTrap.style.left = r.left + 'px';
+            shiftTrap.style.width = r.width + 'px';
+            shiftTrap.style.height = r.height + 'px';
+            shiftTrap.style.zIndex = '1000';
+            shiftTrap.onclick = () => {
+                if (!defenderActive) {
+                    alert('💀 ATTACK SUCCESSFUL!\nMalicious "Delete Account" button clicked.');
+                    log('💀 Attack Successful: Position Shift (Delete Account)', 'attack');
+                    resetState();
+                }
+            };
+            document.body.appendChild(shiftTrap);
+            log('💀 ATTACK READY: Malicious button placed in original spot.', 'attack');
+        }
+    }
+
+    if (armedAttack === 'invisible_overlay' && target.id === 'downloadBtn' && !document.getElementById('malicious-overlay')) {
+        const r = target.getBoundingClientRect();
+        const ghost = document.createElement('div');
+        ghost.id = 'malicious-overlay';
+        ghost.style.position = 'fixed';
+        ghost.style.top = r.top + 'px';
+        ghost.style.left = r.left + 'px';
+        ghost.style.width = r.width + 'px';
+        ghost.style.height = r.height + 'px';
+        ghost.style.opacity = '0.01';
+        ghost.style.background = 'red';
+        ghost.style.zIndex = '9999';
+        ghost.style.pointerEvents = 'auto';
+        ghost.onclick = (event) => {
+            if (!defenderActive) {
+                event.preventDefault();
+                event.stopPropagation();
+                alert('💀 ATTACK SUCCESSFUL!\nInvisible overlay hijacked click.');
+                log('💀 Attack Successful: Invisible Overlay', 'attack');
+                ghost.remove();
+                resetState();
+            }
+        };
+        document.body.appendChild(ghost);
+        log('👻 ATTACK READY: Invisible overlay positioned.', 'attack');
+    }
+
+    if (armedAttack === 'opacity_trick' && target.id === 'downloadBtn' && !document.getElementById('opacity-trap')) {
+        const r = target.getBoundingClientRect();
+        const hidden = document.createElement('button');
+        hidden.id = 'opacity-trap';
+        hidden.textContent = '💀 EXPLOIT';
+        hidden.className = 'attack';
+        hidden.style.position = 'fixed';
+        hidden.style.top = r.top + 'px';
+        hidden.style.left = r.left + 'px';
+        hidden.style.width = r.width + 'px';
+        hidden.style.height = r.height + 'px';
+        hidden.style.opacity = '0';
+        hidden.style.zIndex = '1000';
+        
+        hidden.onclick = () => {
+            if (!defenderActive) {
+                alert('💀 ATTACK SUCCESSFUL!\nHidden element clicked.');
+                log('💀 Attack Successful: Opacity Manipulation', 'attack');
+                hidden.remove();
+                resetState();
+            }
+        };
+        document.body.appendChild(hidden);
+        
+        target.style.opacity = '0';
+        hidden.style.opacity = '1';
+        log('💫 ATTACK READY: Opacity trap armed.', 'attack');
+    }
+});
+
+document.addEventListener('mouseout', (e) => {
+    if (!armedAttack || defenderActive) return;
+    if (e.target.id === 'downloadBtn' && armedAttack === 'button_swap') {
+        e.target.textContent = 'Download Now';
+        e.target.style.background = '';
+    }
+    if (e.target.id === 'subscribeBtn' && armedAttack === 'position_shift') {
+        e.target.style.transform = '';
+        const shiftTrap = document.getElementById('position-shift-trap');
+        if (shiftTrap && !defenderActive) shiftTrap.remove();
+    }
+    if (e.target.id === 'downloadBtn' && armedAttack === 'opacity_trick') {
+        const trap = document.getElementById('opacity-trap');
+        if (trap) trap.remove();
+        e.target.style.opacity = '1';
+    }
+});
+
+function activateDefender() {
+    if (defenderActive) return;
+    defenderActive = true;
+    document.getElementById('defenderBtn').textContent = '🛡️ CLICKLOCK ACTIVE';
+    document.getElementById('defenderBtn').disabled = true;
+    document.getElementById('targetArea').classList.add('active-monitor');
+
+    const observer = new MutationObserver((list) => {
+        if (freezeWindow) {
+            list.forEach(mutation => {
+                mutations.push({ 
+                    time: Date.now(), 
+                    type: mutation.type,
+                    target: mutation.target.id || mutation.target.tagName
+                });
+            });
+            console.log('🔍 CLICKLOCK: Suspicious mutation detected during click window.');
+        }
+    });
+
+    const targetArea = document.getElementById('targetArea');
+    if (targetArea) {
+        observer.observe(targetArea, {
+            attributes: true,
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+    }
+
+    log('🛡️ CLICKLOCK: Prevention system online. Monitoring Target Area.', 'defense');
+}
+
+function validate(e, phase) {
+    if (!armedAttack) return false;
+    
+    let score = 0;
+    const els = document.elementsFromPoint(e.clientX, e.clientY);
+
+    const overlay = els.find(el => el.id === 'malicious-overlay' || el.id === 'opacity-trap' || el.id === 'position-shift-trap');
+    const freezeViolation = mutations.length > 0 && mutations.some(m => Math.abs(Date.now() - m.time) < 400);
+
+    if (overlay) score += 90;
+    if (freezeViolation) score += 100;
+
+    suspicionScore = score;
+    document.getElementById('score').textContent = score;
+
+    if (score >= 80) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        blockedCount++;
+        document.getElementById('blocked').textContent = blockedCount;
+
+        const reason = overlay ? 'STEALTH OVERLAY DETECTED' : 'DOM MUTATION VIOLATION (FREEZE)';
+        log(`🛡️ DEFENSE: Blocked ${reason} | Score: ${score}`, 'defense');
+        
+        alert(`🛡️ SECURITY ALERT: ATTACK BLOCKED!\n\nDetected: ${reason}\nSuspicion Score: ${score}\n\nThe system has prevented a malicious click event.`);
+
+        logAttack(score, reason);
+        resetState();
+        mutations = [];
+        return true;
+    }
+    return false;
+}
+
+function logAttack(score, reason) {
+    fetch('/api/log-attack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            attack_type: 'ghost_click',
+            source: reason,
+            suspicion_score: score,
+            page: 'test_console',
+            blocked: true
+        })
+    });
+}
+</script>
+
+</body>
+</html>
