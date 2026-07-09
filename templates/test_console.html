@@ -154,7 +154,7 @@
 <div class="container">
     <!-- Left Column: Controls and Visualization -->
     <div class="main-panel">
-        <h1>🛡️ Ghost Click Attack – Test Console</h1>
+        <h1>🛡️ Clickjacking Attack – Test Console</h1>
 
         <div class="abstract">
             ClickLock is a security mechanism designed to detect and prevent ghost-click or click-jacking attacks inside web browsers. This system freezes the Document Object Model (DOM) before the click executes, analyzes suspicious element movements, and blocks the malicious event.
@@ -434,29 +434,29 @@ document.addEventListener('mouseover', (e) => {
 
     if (armedAttack === 'invisible_overlay' && target.id === 'downloadBtn' && !document.getElementById('malicious-overlay')) {
         const r = target.getBoundingClientRect();
-        const ghost = document.createElement('div');
-        ghost.id = 'malicious-overlay';
-        ghost.style.position = 'fixed';
-        ghost.style.top = r.top + 'px';
-        ghost.style.left = r.left + 'px';
-        ghost.style.width = r.width + 'px';
-        ghost.style.height = r.height + 'px';
-        ghost.style.opacity = '0.01';
-        ghost.style.background = 'red';
-        ghost.style.zIndex = '9999';
-        ghost.style.pointerEvents = 'auto';
-        ghost.onclick = (event) => {
+        const overlay = document.createElement('div');
+        overlay.id = 'malicious-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = r.top + 'px';
+        overlay.style.left = r.left + 'px';
+        overlay.style.width = r.width + 'px';
+        overlay.style.height = r.height + 'px';
+        overlay.style.opacity = '0.01';
+        overlay.style.background = 'red';
+        overlay.style.zIndex = '9999';
+        overlay.style.pointerEvents = 'auto';
+        overlay.onclick = (event) => {
             if (!defenderActive) {
                 event.preventDefault();
                 event.stopPropagation();
                 alert('💀 ATTACK SUCCESSFUL!\nInvisible overlay hijacked click.');
                 log('💀 Attack Successful: Invisible Overlay', 'attack');
-                ghost.remove();
+                overlay.remove();
                 resetState();
             }
         };
-        document.body.appendChild(ghost);
-        log('👻 ATTACK READY: Invisible overlay positioned.', 'attack');
+        document.body.appendChild(overlay);
+        log('🛡️ ATTACK READY: Invisible overlay positioned.', 'attack');
     }
 
     if (armedAttack === 'opacity_trick' && target.id === 'downloadBtn' && !document.getElementById('opacity-trap')) {
@@ -580,7 +580,7 @@ function logAttack(score, reason) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            attack_type: 'ghost_click',
+            attack_type: 'clickjacking',
             source: reason,
             suspicion_score: score,
             page: 'test_console',

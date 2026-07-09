@@ -3,7 +3,7 @@ Type 'allow pasting' into the console and press Enter.
 Paste and run this code to simulate an Invisible Overlay Attack:
 
 1. Test "Freeze Violation" (Score: 100+)
-Copy and paste this. It will automatically trigger a mutation the moment you click, which the Defender will catch:
+Copy and paste this. It will automatically trigger a mutation the moment you click, which ClickLock will catch:
 
 // This simulation triggers a mutation EXACTLY when you click
 
@@ -23,9 +23,9 @@ Run this and click the button within 2 seconds:
 (function() {
     const btn = document.getElementById('downloadBtn');
     const rect = btn.getBoundingClientRect();
-    const ghost = document.createElement('div');
-    ghost.id = 'malicious-overlay';
-    ghost.style.cssText = `
+    const overlay = document.createElement('div');
+    overlay.id = 'malicious-overlay';
+    overlay.style.cssText = `
         position: fixed; 
         top: ${rect.top}px; 
         left: ${rect.left}px; 
@@ -36,12 +36,12 @@ Run this and click the button within 2 seconds:
         z-index: 10000;
         pointer-events: auto;
     `;
-    document.body.appendChild(ghost);
+    document.body.appendChild(overlay);
     console.log('🚨 Overlay injected! CLICK THE BUTTON NOW (within 2 seconds)!');
 })();
 
 
-To simulate the Browser Ghost Click Attack Defender, you can perform both automated simulations using the "Malicious" page and manual simulations using the Browser Console.
+To simulate ClickLock, you can perform both automated simulations using the "Malicious" page and manual simulations using the Browser Console.
 Method 1: Automated Simulation (Demonstrating the Threat)
 This shows the attack succeeding on a page that isn't fully protected, helping you understand the "before" and "after."
 Run your app: python app.py and go to http://127.0.0.1:5000/malicious.
@@ -54,26 +54,26 @@ Select Invisible Overlay and click Activate Attack.
 Click the button. The system will alert that you clicked the invisible malicious overlay instead.
 
 
-Method 2: Manual Simulation (Testing the Defender)
-This is the most important test. It proves the defender on your Home Page (/) is working.Go to http://127.0.0.1:5000/ and open your Browser Console (F12).
-A. Simulate a "Ghost" Overlay (Opacity Attack)
+Method 2: Manual Simulation (Testing ClickLock)
+This is the most important test. It proves the protection on your Home Page (/) is working. Go to http://127.0.0.1:5000/ and open your Browser Console (F12).
+A. Simulate an Invisible Overlay (Opacity Attack)
 Find the "Download Now" button.
-Run this in your console to create a "ghost" element over it:
+Run this in your console to create an overlay element over it:
 
- const ghost = document.createElement('div');
- ghost.id = 'malicious-overlay';
- ghost.style.position = 'fixed';
- ghost.style.top = document.getElementById('downloadBtn').getBoundingClientRect().top + 'px';
- ghost.style.left = document.getElementById('downloadBtn').getBoundingClientRect().left + 'px';
- ghost.style.width = '200px';
- ghost.style.height = '50px';
- ghost.style.backgroundColor = 'red';
- ghost.style.opacity = '0.01'; // Almost invisible
- ghost.style.zIndex = '9999';
- document.body.appendChild(ghost);
+ const overlay = document.createElement('div');
+ overlay.id = 'malicious-overlay';
+ overlay.style.position = 'fixed';
+ overlay.style.top = document.getElementById('downloadBtn').getBoundingClientRect().top + 'px';
+ overlay.style.left = document.getElementById('downloadBtn').getBoundingClientRect().left + 'px';
+ overlay.style.width = '200px';
+ overlay.style.height = '50px';
+ overlay.style.backgroundColor = 'red';
+ overlay.style.opacity = '0.01'; // Almost invisible
+ overlay.style.zIndex = '9999';
+ document.body.appendChild(overlay);
 
 Try to click the "Download Now" button.
-Result: The defender will pop up an alert: "Attack Blocked! (Identified suspicious overlay: malicious-overlay)".
+Result: ClickLock will pop up an alert: "Attack Blocked! (Identified suspicious overlay: malicious-overlay)".
 B. Simulate a "Freeze Violation" (Mutation Attack)
 This tests the MutationObserver and the DOM "Freeze" logic.
 Run this script in the console:
@@ -94,18 +94,18 @@ Method 3: Dashboard Verification
 After simulating, go to http://127.0.0.1:5000/defender-dashboard to see the results:
 You will see the Threat Level rise to "MED" or "HIGH."
 The Live Activity Feed will show the exact timestamps and element IDs you just simulated.
-const ghost = document.createElement('div');
-ghost.id = 'malicious-overlay';
-ghost.style.position = 'fixed';
-ghost.style.top = document.getElementById('downloadBtn').getBoundingClientRect().top + 'px';
-ghost.style.left = document.getElementById('downloadBtn').getBoundingClientRect().left + 'px';
-ghost.style.width = '200px';
-ghost.style.height = '50px';
-ghost.style.backgroundColor = 'red';
-ghost.style.opacity = '0.01';
-ghost.style.zIndex = '9999';
-document.body.appendChild(ghost);
-console.log('Ghost overlay created. Now click "Download Now".');
+const overlay = document.createElement('div');
+overlay.id = 'malicious-overlay';
+overlay.style.position = 'fixed';
+overlay.style.top = document.getElementById('downloadBtn').getBoundingClientRect().top + 'px';
+overlay.style.left = document.getElementById('downloadBtn').getBoundingClientRect().left + 'px';
+overlay.style.width = '200px';
+overlay.style.height = '50px';
+overlay.style.backgroundColor = 'red';
+overlay.style.opacity = '0.01';
+overlay.style.zIndex = '9999';
+document.body.appendChild(overlay);
+console.log('Overlay created. Now click "Download Now".');
 
 Paste and run this code to simulate a Freeze Violation Attack:
 
@@ -118,29 +118,29 @@ document.addEventListener('mousedown', () => {
 console.log('Freeze trap set. Now click "Subscribe Free".');
 Paste and run this code again to simulate the Invisible Overlay Attack:
 
-const ghost = document.createElement('div');
-ghost.id = 'malicious-overlay';
-ghost.style.position = 'fixed';
-ghost.style.top = document.getElementById('downloadBtn').getBoundingClientRect().top + 'px';
-ghost.style.left = document.getElementById('downloadBtn').getBoundingClientRect().left + 'px';
-ghost.style.width = '200px';
-ghost.style.height = '50px';
-ghost.style.backgroundColor = 'red';
-ghost.style.opacity = '0.01';
-ghost.style.zIndex = '9999';
-document.body.appendChild(ghost);
-console.log('Ghost overlay created. Now click "Download Now".');
+const overlay = document.createElement('div');
+overlay.id = 'malicious-overlay';
+overlay.style.position = 'fixed';
+overlay.style.top = document.getElementById('downloadBtn').getBoundingClientRect().top + 'px';
+overlay.style.left = document.getElementById('downloadBtn').getBoundingClientRect().left + 'px';
+overlay.style.width = '200px';
+overlay.style.height = '50px';
+overlay.style.backgroundColor = 'red';
+overlay.style.opacity = '0.01';
+overlay.style.zIndex = '9999';
+document.body.appendChild(overlay);
+console.log('Overlay created. Now click "Download Now".');
 
 Navigate to http://127.0.0.1:
 Executing Attack Simulations
 5000/malicious.
-To test Attack Success (No Defender):
+To test Attack Success (No Protection):
 Select "Invisible Overlay" in the list.
 Click "Activate Attack".
 Click the blue "Click to Win $1000!" button.
 Result: You will see a "💀 ATTACK SUCCESSFUL!" alert.
-To test Defender Blocking (Real-time):
-Open the Console (F12) and paste the following Defender script to protect the malicious page:
+To test ClickLock Blocking (Real-time):
+Open the Console (F12) and paste the following ClickLock script to protect the malicious page:
 
 
 
@@ -163,17 +163,18 @@ Open the Console (F12) and paste the following Defender script to protect the ma
         if (suspicious.length > 0 || recentMutations.length > 0) {
             e.preventDefault();
             e.stopPropagation();
-            alert(`🛡️ DEFENDER: Attack Blocked!\n\nDetected: ${suspicious.length > 0 ? 'Invisible Overlay (' + (suspicious[0].id || 'unknown') + ')' : 'Sudden DOM Mutation'}`);
+            alert(`🛡️ CLICKLOCK: Attack Blocked!\n\nDetected: ${suspicious.length > 0 ? 'Invisible Overlay (' + (suspicious[0].id || 'unknown') + ')' : 'Sudden DOM Mutation'}`);
             return false;
         }
     }, true);
-    console.log("🛡️ Defender Active on Malicious Page.");
+    console.log("🛡️ ClickLock Active on Malicious Page.");
 })();
 
 
 * Now select "Button Swap" or "Opacity Trick".
 Click "Activate Attack" and try to click the button.
-Result: The Defender will intercept the malicious swap and block the click before the "Attack Successful" message can appear.
+Result: ClickLock will intercept the malicious swap and block the click before the "Attack Successful" message can appear.
 Verify Backend Logging:
-After any click (blocked or successful), navigate to http://127.0.0.1:5000/api/get-attacks or check the Defender Dashboard at http://127.0.0.1:5000/defender-dashboard to see the logs.
+After any click (blocked or successful), navigate to http://127.0.0.1:5000/api/get-attacks or check the ClickLock Dashboard at http://127.0.0.1:5000/defender-dashboard to see the logs.
+
 

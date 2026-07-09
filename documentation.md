@@ -1,7 +1,7 @@
-# 🛡️ Browser Ghost Click Attack Defender: Technical Documentation
+# 🛡️ ClickLock: Technical Documentation
 
 ## 1. Project Overview
-The **Browser Ghost Click Attack Defender** is a client-side security system designed to detect and prevent ghost-click (click-jacking) attacks. It operates by monitoring behavioral anomalies, detecting invisible overlays, and enforcing a "DOM Freeze" window during user interactions to ensure the legitimacy of every click.
+The **ClickLock** system is a client-side security system designed to detect and prevent clickjacking attacks. It operates by monitoring behavioral anomalies, detecting invisible overlays, and enforcing a "DOM Freeze" window during user interactions to ensure the legitimacy of every click.
 
 ---
 

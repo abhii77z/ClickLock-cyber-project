@@ -6,7 +6,7 @@ class Database(object):
 
     def __init__(self, config=None, username=None, password=None, host=None, port=None, db_name=None):
         if db_name is None:
-            db_name = os.getenv('MYSQL_DATABASE') or 'ghost_click_attack'
+            db_name = os.getenv('MYSQL_DATABASE') or 'clicklock_db'
         if username is None:
             username = os.getenv('MYSQL_USERNAME') or 'root'
         if password is None:

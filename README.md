@@ -1,6 +1,6 @@
 # ClickLock 🔒
 
-A client-side security architecture designed to detect, analyze, and neutralize browser-based **Ghost Click (Clickjacking)** attacks.
+A client-side security architecture designed to detect, analyze, and neutralize browser-based **Clickjacking** attacks.
 
 ---
 

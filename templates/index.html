@@ -561,7 +561,7 @@
             }
         });
 
-        // Start observing with broad options to detect ghost-click setups
+        // Start observing with broad options to detect click-jacking setups
         mutationObserver.observe(document.body, {
             childList: true,
             attributes: true,
@@ -631,7 +631,7 @@
                 return isTransparent && isVisible && style.pointerEvents !== 'none';
             };
 
-            // 3.1 Check if target itself is a ghost element
+            // 3.1 Check if target itself is an invisible/transparent overlay
             if (isSuspicious(target)) {
                 suspicionScore += 80;
                 maliciousElement = target.id || target.className || target.tagName;
@@ -689,7 +689,7 @@
             const message = document.getElementById('alertMessage');
 
             const elementName = element.id || element.className || element.tagName;
-            let alertContent = `A ghost-click attack was detected and blocked while you were trying to interact with "${elementName}". Your action has been protected.`;
+            let alertContent = `A clickjacking attack was detected and blocked while you were trying to interact with "${elementName}". Your action has been protected.`;
             
             if (maliciousDetails && maliciousDetails.maliciousElement) {
                 alertContent += ` (Identified suspicious overlay: ${maliciousDetails.maliciousElement})`;

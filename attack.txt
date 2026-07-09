@@ -1,21 +1,21 @@
 const btn = document.getElementById('downloadBtn');
 const rect = btn.getBoundingClientRect();
 
-const ghost = document.createElement('div');
-ghost.id = 'malicious-overlay';
-ghost.style.position = 'fixed';
-ghost.style.top = rect.top + 'px';
-ghost.style.left = rect.left + 'px';
-ghost.style.width = rect.width + 'px';
-ghost.style.height = rect.height + 'px';
-ghost.style.backgroundColor = 'red';
-ghost.style.opacity = '0.01';          // almost invisible
-ghost.style.zIndex = '9999';
-ghost.style.pointerEvents = 'auto';    // 🔴 CRITICAL
+const overlay = document.createElement('div');
+overlay.id = 'malicious-overlay';
+overlay.style.position = 'fixed';
+overlay.style.top = rect.top + 'px';
+overlay.style.left = rect.left + 'px';
+overlay.style.width = rect.width + 'px';
+overlay.style.height = rect.height + 'px';
+overlay.style.backgroundColor = 'red';
+overlay.style.opacity = '0.01';          // almost invisible
+overlay.style.zIndex = '9999';
+overlay.style.pointerEvents = 'auto';    // 🔴 CRITICAL
 
-document.body.appendChild(ghost);
+document.body.appendChild(overlay);
 
-console.log('👻 Ghost overlay created. Now click "Download Now".');
+console.log('🛡️ Overlay created. Now click "Download Now".');
 
 
 Test "Invisible Overlay" (Score: 80+)
@@ -25,9 +25,9 @@ Run this and click the button within 2 seconds:
 (function() {
     const btn = document.getElementById('downloadBtn');
     const rect = btn.getBoundingClientRect();
-    const ghost = document.createElement('div');
-    ghost.id = 'malicious-overlay';
-    ghost.style.cssText = `
+    const overlay = document.createElement('div');
+    overlay.id = 'malicious-overlay';
+    overlay.style.cssText = `
         position: fixed; 
         top: ${rect.top}px; 
         left: ${rect.left}px; 
@@ -38,6 +38,6 @@ Run this and click the button within 2 seconds:
         z-index: 10000;
         pointer-events: auto;
     `;
-    document.body.appendChild(ghost);
+    document.body.appendChild(overlay);
     console.log('🚨 Overlay injected! CLICK THE BUTTON NOW (within 2 seconds)!');
 })();
