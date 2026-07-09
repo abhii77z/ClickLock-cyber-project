@@ -13,13 +13,14 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #09090b 0%, #150915 100%);
+            color: #e4e4e7;
             min-height: 100vh;
             padding: 20px;
         }
 
         .protection-banner {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #ff007f 0%, #a3004f 100%);
             color: white;
             padding: 15px 30px;
             border-radius: 10px;
@@ -27,7 +28,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 5px 20px rgba(255, 0, 127, 0.3);
             animation: slideDown 0.5s;
         }
 
@@ -93,20 +94,22 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: rgba(18, 18, 24, 0.7);
             border-radius: 15px;
             padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 0, 127, 0.15);
+            backdrop-filter: blur(12px);
         }
 
         h1 {
-            color: #333;
+            color: #ffffff;
             margin-bottom: 15px;
             font-size: 32px;
         }
 
         .subtitle {
-            color: #666;
+            color: #a1a1aa;
             margin-bottom: 40px;
             font-size: 16px;
         }
@@ -119,26 +122,26 @@
         }
 
         .card {
-            background: #f8f9ff;
+            background: rgba(255, 255, 255, 0.03);
             padding: 30px;
             border-radius: 12px;
-            border: 2px solid #e5e7eb;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s;
         }
 
         .card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            border-color: #ff007f;
+            box-shadow: 0 5px 20px rgba(255, 0, 127, 0.25);
         }
 
         .card h3 {
-            color: #667eea;
+            color: #ff007f;
             margin-bottom: 15px;
             font-size: 20px;
         }
 
         .card p {
-            color: #666;
+            color: #a1a1aa;
             line-height: 1.6;
             margin-bottom: 20px;
         }
@@ -146,7 +149,7 @@
         .btn {
             display: inline-block;
             padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff007f 0%, #d6006b 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -159,26 +162,28 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.5);
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            background: linear-gradient(135deg, #27272a 0%, #18181b 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #ff007f 0%, #99004d 100%);
         }
 
         .form-section {
-            background: #f8f9ff;
+            background: rgba(255, 255, 255, 0.02);
             padding: 30px;
             border-radius: 12px;
             margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .form-section h3 {
-            color: #333;
+            color: #ffffff;
             margin-bottom: 20px;
         }
 
@@ -189,14 +194,16 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #555;
+            color: #a1a1aa;
             font-weight: 500;
         }
 
         .form-group input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            background: #09090b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
             border-radius: 8px;
             font-size: 14px;
             transition: border 0.3s;
@@ -204,7 +211,8 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #ff007f;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
         }
 
         .action-buttons {
@@ -219,10 +227,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
+            background: #18181b;
+            border: 1px solid #ff007f;
+            color: #ffffff;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
             z-index: 10000;
             min-width: 400px;
             display: none;
@@ -258,11 +268,11 @@
         .alert-title {
             font-size: 24px;
             font-weight: bold;
-            color: #ef4444;
+            color: #ff007f;
         }
 
         .alert-message {
-            color: #666;
+            color: #a1a1aa;
             margin-bottom: 20px;
             line-height: 1.6;
         }
@@ -279,7 +289,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             z-index: 9999;
             display: none;
         }
@@ -292,12 +302,12 @@
             text-align: center;
             margin-top: 40px;
             padding-top: 30px;
-            border-top: 2px solid #e5e7eb;
-            color: #999;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #71717a;
         }
 
         .footer a {
-            color: #667eea;
+            color: #ff007f;
             text-decoration: none;
         }
 
@@ -416,7 +426,7 @@
                 <h3 style="margin: 0;">🛡️ Real-time Security Monitor</h3>
                 <button class="btn btn-secondary" style="padding: 5px 15px; font-size: 12px;" onclick="document.getElementById('securityLog').innerHTML = ''">Clear Log</button>
             </div>
-            <div id="securityLog" style="background: #1a1a2e; color: #00ff00; padding: 15px; border-radius: 8px; font-family: monospace; height: 200px; overflow-y: auto; font-size: 13px; line-height: 1.5;">
+            <div id="securityLog" style="background: #09090b; color: #ff007f; border: 1px solid rgba(255, 0, 127, 0.2); padding: 15px; border-radius: 8px; font-family: monospace; height: 200px; overflow-y: auto; font-size: 13px; line-height: 1.5;">
                 <div style="color: #888;">> Waiting for security events...</div>
             </div>
         </div>

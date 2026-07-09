@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #09090b 0%, #150915 100%);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -56,7 +56,7 @@
         .header h1 {
             font-size: 36px;
             margin-bottom: 10px;
-            color: #ef4444;
+            color: #ff007f;
         }
 
         .header p {
@@ -64,16 +64,17 @@
         }
 
         .control-panel {
-            background: #16213e;
+            background: rgba(18, 18, 24, 0.7);
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            border: 2px solid #ef4444;
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            backdrop-filter: blur(12px);
         }
 
         .control-panel h3 {
             margin-bottom: 20px;
-            color: #ef4444;
+            color: #ff007f;
         }
 
         .attack-selector {
@@ -84,7 +85,7 @@
         }
 
         .attack-option {
-            background: #0f3460;
+            background: rgba(255, 255, 255, 0.03);
             padding: 20px;
             border-radius: 10px;
             cursor: pointer;
@@ -93,18 +94,18 @@
         }
 
         .attack-option:hover {
-            border-color: #ef4444;
+            border-color: #ff007f;
             transform: translateY(-3px);
         }
 
         .attack-option.active {
-            border-color: #10b981;
-            background: #064e3b;
+            border-color: #ff007f;
+            background: rgba(255, 0, 127, 0.15);
         }
 
         .attack-option h4 {
             margin-bottom: 8px;
-            color: #ef4444;
+            color: #ff007f;
         }
 
         .attack-option p {
@@ -129,36 +130,38 @@
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: linear-gradient(135deg, #ff007f 0%, #d6006b 100%);
             color: white;
         }
 
         .btn-danger:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.5);
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #27272a;
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .btn-success {
-            background: #10b981;
+            background: #ff007f;
             color: white;
         }
 
         .demo-area {
-            background: white;
+            background: rgba(18, 18, 24, 0.5);
             padding: 60px;
             border-radius: 15px;
             min-height: 400px;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .demo-title {
-            color: #333;
+            color: #ffffff;
             text-align: center;
             margin-bottom: 40px;
             font-size: 24px;
@@ -168,7 +171,7 @@
             display: block;
             margin: 0 auto;
             padding: 20px 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff007f 0%, #d6006b 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -182,14 +185,14 @@
 
         .demo-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(255, 0, 127, 0.5);
         }
 
         .hidden-button {
             display: none;
             position: absolute;
             padding: 20px 50px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -212,42 +215,43 @@
         }
 
         .attack-status {
-            background: #16213e;
+            background: rgba(255, 255, 255, 0.02);
             padding: 20px;
             border-radius: 10px;
             margin-top: 30px;
-            border-left: 4px solid #ef4444;
+            border-left: 4px solid #ff007f;
         }
 
         .attack-status h4 {
             margin-bottom: 10px;
-            color: #ef4444;
+            color: #ff007f;
         }
 
         .status-item {
             padding: 10px;
-            background: #0f3460;
+            background: rgba(255, 255, 255, 0.05);
             margin-bottom: 8px;
             border-radius: 5px;
             font-family: monospace;
+            color: #fff;
         }
 
         .footer {
             text-align: center;
             margin-top: 40px;
             padding-top: 30px;
-            border-top: 2px solid #16213e;
-            color: #666;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #71717a;
         }
 
         .footer a {
-            color: #667eea;
+            color: #ff007f;
             text-decoration: none;
         }
 
         @keyframes attackAnimation {
             0%, 100% {
-                border-color: #ef4444;
+                border-color: #ff007f;
             }
             50% {
                 border-color: #fbbf24;
@@ -255,7 +259,7 @@
         }
 
         .demo-area.attack-active {
-            border: 3px solid #ef4444;
+            border: 3px solid #ff007f;
             animation: attackAnimation 1s infinite;
         }
     </style>
