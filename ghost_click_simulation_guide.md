@@ -1,6 +1,6 @@
-# Ghost Click Simulation & Defense Guide
+# ClickLock Simulation & Defense Guide
 
-This guide details the **Ghost Click Attack Defender** system, including implementation details for the four primary attack vectors and the defensive mechanisms used to neutralize them.
+This guide details the **ClickLock** system, including implementation details for the four primary attack vectors and the defensive mechanisms used to neutralize them.
 
 ## 📁 File Structure
 - `app.py`: Flask backend for serving pages and logging security events.
@@ -23,7 +23,7 @@ This guide details the **Ghost Click Attack Defender** system, including impleme
 4.  **Execute Trigger**:
     Hover over or click the blue **Target Buttons** inside the dashed "Target Area".
 5.  **Activate Defense**:
-    Click the green **Activate Defender** button and repeat the attack to observe the prevention mechanism.
+    Click the pink **Activate ClickLock** button and repeat the attack to observe the prevention mechanism.
 
 ---
 
@@ -51,9 +51,9 @@ This guide details the **Ghost Click Attack Defender** system, including impleme
 
 ---
 
-## 🛡️ How the Defender Works
+## 🛡️ How ClickLock Works
 
-The Defender system uses a multi-layered approach to verify click integrity:
+The ClickLock system uses a multi-layered approach to verify click integrity:
 
 ### 1. DOM Freezing (Mutation Observation)
 - **Concept**: The system monitors all changes to the DOM.
